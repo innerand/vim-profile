@@ -1,0 +1,6 @@
+.backup/
+.swp/
+.undo/
+bundle/
+!bundle/Vundle.vim
+.vimrc.private
