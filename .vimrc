@@ -1,6 +1,7 @@
-" ====================
-" VUNDLE CONFIGURATION
-" ====================
+" ======================
+"  VUNDLE CONFIGURATION
+" ======================
+
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
@@ -15,6 +16,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+Plugin 'bling/vim-bufferline'
 "Plugin 'vim-scripts/CycleColor'
 Plugin 'tpope/vim-sensible'
 Plugin 'scrooloose/syntastic'
@@ -23,7 +25,8 @@ Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'lervag/vimtex'
 Plugin 'altercation/vim-colors-solarized'
 "Rust
-Plugin 'racer-rust/vim-racer'
+Plugin 'Valloric/YouCompleteMe'
+"Plugin 'racer-rust/vim-racer'
 "Plugin 'rust-lang/rust.vim'
 Plugin 'innerand/rust.vim'
 " All of your Plugins must be added before the following line
@@ -43,9 +46,9 @@ filetype plugin indent on    " required
 "
 " \vundle configuration
 "
-"==================================
-"AIRLINE (Status line) Configuration
-"==================================
+" =====================================
+"  AIRLINE (Status line) Configuration
+" =====================================
 "
 " Always display status line in last window
 set laststatus=2
@@ -73,11 +76,13 @@ let g:airline_symbols.whitespace = 'Ξ'
 
 let g:airline_theme='papercolor'
 let g:airline#extensions#whitespace#enabled = 0
-" \Airline
+let g:airline#extensions#bufferline#enabled = 1
+let g:bufferline_echo = 0 " Don't show buffers in commandline
 
-" ===========
-" Colorscheme
-" ===========
+" =============
+"  Colorscheme
+" =============
+
 syntax enable
 if has('gui_running')
    set guifont=DejaVu\ Sans\ Mono\ 12
@@ -96,35 +101,52 @@ endif
 " ================
 " Syntastic Plugin
 " ================
+
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntatsic_check_on_wq = 0
 
 let g:syntastic_rust_checkers = ['cargo']
+nmap <F4> :SyntasticToggleMode<CR>
 
-" ===================
-" Racer Plugin (Rust)
-" ===================
-set hidden
-let g:racer_cmd = "~/.cargo/bin/racer"
 
-au FileType rust nmap gs <Plug>(rust-def-split)
+" ===============
+"  YouCompleteMe
+" ===============
 
-" ==============
-" BASIC SETTINGS
-" ==============
+let g:ycm_rust_src_path = '/home/innerand/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src'
+let g:ycm_filetype_whitelist = { 'rust' : 1 }
+
+
+" ==========
+"  Nerdtree
+" ==========
+
+" Open Nerdtree when started without args
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" Keymapings
+map <C-n> :NERDTreeToggle<CR>
+map <C-m> :NERDTreeFind<CR>
+" Close vim when only window left is NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+
+" ================
+"  Other Settings
+" ================
 
 syntax enable
 set number "show line numbers
-
+set hidden " allows buffer switching with unsaved changes
 " set textwidth=80
 
 " Languages for spell check
 " usage: set spell / set unspell, ]s, z=
 set spelllang=en,de_at
 
-"indent Settings
+" Indent Settings
 set autoindent
 set smartindent
 set tabstop=3
@@ -132,7 +154,7 @@ set expandtab
 set shiftwidth=3
 set softtabstop=3
 
-"Search settings
+" Search settings
 set incsearch
 set hlsearch
 set ignorecase
@@ -149,7 +171,7 @@ set foldmethod=indent
 set foldnestmax=2
 set nofoldenable
 
-" Custom Keymappings
+" Leader
 let mapleader = ','
 let maplocalleader = '\'
 
@@ -172,6 +194,48 @@ autocmd BufWritePre * :call SelectiveStripWhiteSpace()
 " Filetype Settings
 au FileType markdown set tw=80 ts=3 spell
 au FileType tex set tw=80 ts=3 spell
+au FileType rust nmap <F5> :!cargo run<CR>
+au FileType rust nmap <F6> :!cargo check<CR>
+au FileType rust nmap <F7> :!cargo test -- --nocapture<CR>
+au FileType rust nmap <F8> :w<CR>:silent exec "!cargo fmt"<CR>:redraw!<CR>
 
-" Make double-<Esc> clear highlights
-nnoremap <silent> <Esc><Esc> <Esc>:nohl<CR><ESC>
+" Clear highlight
+nmap <silent> <leader>/ :nohl<CR>
+" This one had side effects when <ESC> was pressed once
+" nnoremap <silent> <Esc><Esc> <Esc>:nohl<CR><ESC>
+
+" List buffers
+:nnoremap <F2> :buffers<CR>:buffer<Space>
+" Close Buffer, keep window with :Bd
+command Bd bp|bd #
+" List buffers
+nnoremap <leader>l :ls<CR>
+" Go back/forward/last used
+nnoremap <leader>b :bp<CR>
+nnoremap <leader>f :bn<CR>
+nnoremap <leader>g :e#<CR>
+" Go to buffer 1/2/3/..
+nnoremap <leader>1 :1b<CR>
+nnoremap <leader>2 :2b<CR>
+nnoremap <leader>3 :3b<CR>
+nnoremap <leader>4 :4b<CR>
+nnoremap <leader>5 :5b<CR>
+nnoremap <leader>6 :6b<CR>
+nnoremap <leader>7 :7b<CR>
+nnoremap <leader>8 :8b<CR>
+nnoremap <leader>9 :9b<CR>
+nnoremap <leader>0 :10<CR>
+
+" Faster Window switching
+nmap <silent> <leader>w :wincmd p<CR>
+" Window switching with <Ctrl> hjkl and <Alt> arrows
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+nmap <silent> <A-UP> :wincmd k<CR>
+nmap <silent> <A-Down> :wincmd j<CR>
+nmap <silent> <A-Left> :wincmd h<CR>
+nmap <silent> <A-Right> :wincmd l<CR>
+
+
