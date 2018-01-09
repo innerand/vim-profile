@@ -25,7 +25,7 @@ Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'lervag/vimtex'
 Plugin 'altercation/vim-colors-solarized'
 "Rust
-Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/YouCompleteMe'
 "Plugin 'racer-rust/vim-racer'
 "Plugin 'rust-lang/rust.vim'
 Plugin 'innerand/rust.vim'
@@ -123,6 +123,8 @@ let g:ycm_filetype_whitelist = { 'rust' : 1 }
 "  Nerdtree
 " ==========
 
+" Set width
+let g:NERDTreeWinSize=22
 " Open Nerdtree when started without args
 " autocmd StdinReadPre * let s:std_in=1
 " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
@@ -156,12 +158,12 @@ set softtabstop=3
 
 " Search settings
 set incsearch
-set hlsearch
+" set hlsearch
 set ignorecase
 
 " No wrapping, better scroling
 set nowrap
-set scrolloff=3
+set scrolloff=10
 set sidescroll=3
 set sidescrolloff=7
 set listchars+=precedes:<,extends:>
@@ -227,6 +229,7 @@ nnoremap <leader>9 :9b<CR>
 nnoremap <leader>0 :10<CR>
 
 " Faster Window switching
+nmap <Tab> <C-W>w
 nmap <silent> <leader>w :wincmd p<CR>
 " Window switching with <Ctrl> hjkl and <Alt> arrows
 nnoremap <C-J> <C-W><C-J>
@@ -238,4 +241,4 @@ nmap <silent> <A-Down> :wincmd j<CR>
 nmap <silent> <A-Left> :wincmd h<CR>
 nmap <silent> <A-Right> :wincmd l<CR>
 
-
+source ~/.vim/ra.vim
