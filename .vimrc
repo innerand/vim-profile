@@ -2,8 +2,8 @@
 "  VUNDLE CONFIGURATION
 " ======================
 
-set nocompatible              " be iMproved, required
-filetype off                  " required
+set nocompatible
+filetype off
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -27,8 +27,8 @@ Plugin 'altercation/vim-colors-solarized'
 "Rust
 Plugin 'Valloric/YouCompleteMe'
 "Plugin 'racer-rust/vim-racer'
-"Plugin 'rust-lang/rust.vim'
-Plugin 'innerand/rust.vim'
+Plugin 'rust-lang/rust.vim'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -50,7 +50,7 @@ filetype plugin indent on    " required
 "  AIRLINE (Status line) Configuration
 " =====================================
 "
-" Always display status line in last window
+" Always display status line
 set laststatus=2
 
 if !exists('g:airline_symbols')
@@ -127,8 +127,8 @@ let g:ycm_filetype_whitelist = { 'rust' : 1 }
 " autocmd StdinReadPre * let s:std_in=1
 " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 " Keymapings
-map <C-n> :NERDTreeToggle<CR>
-map <C-m> :NERDTreeFind<CR>
+nmap <C-n> :NERDTreeToggle<CR>
+nmap <C-m> :NERDTreeFind<CR>
 " Close vim when only window left is NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
@@ -137,31 +137,40 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 "  Other Settings
 " ================
 
-syntax enable
-set number "show line numbers
-set hidden " allows buffer switching with unsaved changes
-" set textwidth=80
+" Add current dir and all subfolders to path
+" (Tab-completition of file names)
+set path+=**
 
-" Languages for spell check
-" usage: set spell / set unspell, ]s, z=
+" Display matches of tab complete
+set wildmenu
+
+" Enable syntax highlighting
+syntax enable
+
+set number  relativenumber "show relativ line numbers
+set hidden " allows buffer switching with unsaved changes
+set textwidth=80
+
+" Spellcheck
 set spelllang=en,de_at
+set spell
 
 " Indent Settings
 set autoindent
 set smartindent
-set tabstop=3
+set tabstop=4
 set expandtab
-set shiftwidth=3
-set softtabstop=3
+set shiftwidth=4
+set softtabstop=4
 
 " Search settings
-set incsearch
-set hlsearch
+" set incsearch
+set nohlsearch
 set ignorecase
 
 " No wrapping, better scroling
 set nowrap
-set scrolloff=3
+set scrolloff=10
 set sidescroll=3
 set sidescrolloff=7
 set listchars+=precedes:<,extends:>
@@ -190,6 +199,13 @@ fun! SelectiveStripWhiteSpace()
    StripWhitespace
 endfun
 autocmd BufWritePre * :call SelectiveStripWhiteSpace()
+
+" Set relative number in normal mode
+augroup numbertoogle
+    autocmd!
+    autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+    autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+augroup END
 
 " Filetype Settings
 au FileType markdown set tw=80 ts=3 spell
@@ -226,6 +242,10 @@ nnoremap <leader>8 :8b<CR>
 nnoremap <leader>9 :9b<CR>
 nnoremap <leader>0 :10<CR>
 
+" Vertical centered scrolling
+nnoremap j jzz
+nnoremap k kzz
+
 " Faster Window switching
 nmap <silent> <leader>w :wincmd p<CR>
 " Window switching with <Ctrl> hjkl and <Alt> arrows
@@ -237,5 +257,4 @@ nmap <silent> <A-UP> :wincmd k<CR>
 nmap <silent> <A-Down> :wincmd j<CR>
 nmap <silent> <A-Left> :wincmd h<CR>
 nmap <silent> <A-Right> :wincmd l<CR>
-
 
