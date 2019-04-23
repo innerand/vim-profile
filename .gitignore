@@ -4,3 +4,5 @@
 bundle/
 !bundle/Vundle.vim
 .vimrc.private
+spell/
+ra.vim

@@ -1,4 +1,4 @@
-" ======================
+"- ======================
 "  VUNDLE CONFIGURATION
 " ======================
 
@@ -14,9 +14,10 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'tpope/vim-fugitive'
+Plugin 'shumphrey/fugitive-gitlab.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'bling/vim-bufferline'
+"Plugin 'bling/vim-bufferline'
 "Plugin 'vim-scripts/CycleColor'
 Plugin 'tpope/vim-sensible'
 Plugin 'scrooloose/syntastic'
@@ -25,9 +26,12 @@ Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'lervag/vimtex'
 Plugin 'altercation/vim-colors-solarized'
 "Rust
-"Plugin 'Valloric/YouCompleteMe'
 "Plugin 'racer-rust/vim-racer'
 Plugin 'rust-lang/rust.vim'
+"Plugin 'KabbAmine/zeavim.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'FelikZ/ctrlp-py-matcher'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -74,9 +78,39 @@ let g:airline_symbols.spell = 'Ꞩ'
 let g:airline_symbols.notexists = '∄'
 let g:airline_symbols.whitespace = 'Ξ'
 
-let g:airline_theme='papercolor'
+let g:airline_mode_map = {
+      \ '__' : '-',
+      \ 'c'  : 'C',
+      \ 'i'  : 'I',
+      \ 'ic' : 'I',
+      \ 'ix' : 'I',
+      \ 'n'  : 'N',
+      \ 'ni' : 'N',
+      \ 'no' : 'N',
+      \ 'R'  : 'R',
+      \ 'Rv' : 'R',
+      \ 's'  : 'S',
+      \ 'S'  : 'S',
+      \ '' : 'S',
+      \ 't'  : 'T',
+      \ 'v'  : 'V',
+      \ 'V'  : 'V',
+      \ '' : 'V',
+      \ }
+
+" Command line color scheme
+let g:airline_theme='solarized'
+let g:airline_solarized_bg='dark'
+
 let g:airline#extensions#whitespace#enabled = 0
-let g:airline#extensions#bufferline#enabled = 1
+let g:airline#extensions#bufferline#enabled = 0
+let g:airline#extensions#tabline#enabled = 0
+let g:airline#extensions#tabline#buffer_idx_mode = 0
+let g:airline#extensions#nerdtree#enabled = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#branch#format = 1
+let g:airline#extensions#branch#displayed_head_limit = 14
+
 let g:bufferline_echo = 0 " Don't show buffers in commandline
 
 " =============
@@ -89,7 +123,7 @@ if has('gui_running')
    set background=light
    colorscheme solarized
 else
-   set background=light
+   set background=dark
    colorscheme solarized
    " Fix broken backgroundcolor
    if &term =~ '256color'
@@ -104,19 +138,15 @@ endif
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntatsic_check_on_wq = 0
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_mode = 'passive'
+let g:syntastic_mode_map = { "mode": "passive",
+                            \"active_filetypes": ["xml"],
+                            \"passive_filetypes": [] }
 
 let g:syntastic_rust_checkers = ['cargo']
 nmap <F4> :SyntasticToggleMode<CR>
-
-
-" ===============
-"  YouCompleteMe
-" ===============
-
-let g:ycm_rust_src_path = '/home/innerand/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src'
-let g:ycm_filetype_whitelist = { 'rust' : 1 }
 
 
 " ==========
@@ -124,7 +154,7 @@ let g:ycm_filetype_whitelist = { 'rust' : 1 }
 " ==========
 
 " Set width
-let g:NERDTreeWinSize=22
+let g:NERDTreeWinSize=30
 " Open Nerdtree when started without args
 " autocmd StdinReadPre * let s:std_in=1
 " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
@@ -141,7 +171,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 
 " Add current dir and all subfolders to path
 " (Tab-completition of file names)
-set path+=**
+" set path+=$PWD/**
 
 " Display matches of tab complete
 set wildmenu
@@ -149,9 +179,10 @@ set wildmenu
 " Enable syntax highlighting
 syntax enable
 
-set number  relativenumber "show relativ line numbers
+set number "relativenumber "show relativ line numbers
 set hidden " allows buffer switching with unsaved changes
 set textwidth=80
+set colorcolumn=+1
 
 " Spellcheck
 set spelllang=en,de_at
@@ -203,11 +234,11 @@ endfun
 autocmd BufWritePre * :call SelectiveStripWhiteSpace()
 
 " Set relative number in normal mode
-augroup numbertoogle
-    autocmd!
-    autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-    autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-augroup END
+" augroup numbertoogle
+"    autocmd!
+"    autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+"    autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+" augroup END
 
 " Filetype Settings
 au FileType markdown set tw=80 ts=3 spell
@@ -229,8 +260,8 @@ command Bd bp|bd #
 " List buffers
 nnoremap <leader>l :ls<CR>
 " Go back/forward/last used
-nnoremap <leader>b :bp<CR>
-nnoremap <leader>f :bn<CR>
+nnoremap <leader>j :bn<CR>
+nnoremap <leader>k :bp<CR>
 nnoremap <leader>g :e#<CR>
 " Go to buffer 1/2/3/..
 nnoremap <leader>1 :1b<CR>
@@ -261,4 +292,17 @@ nmap <silent> <A-Down> :wincmd j<CR>
 nmap <silent> <A-Left> :wincmd h<CR>
 nmap <silent> <A-Right> :wincmd l<CR>
 
-source ~/.vim/ra.vim
+" CtrlP
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_custom_ignore = {
+    \ 'dir': '\v[\/]\.(git|hg|svn)$',
+    \ 'file': '\v\.(exe|so|dll|d|o|swp|lst)$',
+    \ 'link': ''}
+"let g:ctrlp_user_command = "find %s -type f | rg -g ''!.(dll|exe|so|d|o|swp|lst)''"
+let g:ctrlp_extensions = ['tag']
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+set grepprg=rg
+
+if !empty(glob("~/.vim/ra.vim"))
+    source ~/.vim/ra.vim
+endif
