@@ -31,7 +31,8 @@ Plugin 'rust-lang/rust.vim'
 "Plugin 'KabbAmine/zeavim.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'FelikZ/ctrlp-py-matcher'
-
+Plugin 'jremmen/vim-ripgrep'
+Plugin 'dyng/ctrlsf.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -49,7 +50,12 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 "
 " \vundle configuration
-"
+
+
+let g:ctrlsf_populate_qflist = 1
+let g:ctrlsf_position = 'bottom'
+
+
 " =====================================
 "  AIRLINE (Status line) Configuration
 " =====================================
@@ -187,6 +193,7 @@ set colorcolumn=+1
 " Spellcheck
 set spelllang=en,de_at
 set spell
+hi SpellBad cterm=underline
 
 " Indent Settings
 set autoindent
@@ -243,6 +250,7 @@ autocmd BufWritePre * :call SelectiveStripWhiteSpace()
 " Filetype Settings
 au FileType markdown set tw=80 ts=3 spell
 au FileType tex set tw=80 ts=3 spell
+au FileType yaml set tw:80 ts=2 sts=2 sw=2 expandtab
 au FileType rust nmap <F5> :!cargo run<CR>
 au FileType rust nmap <F6> :!cargo check<CR>
 au FileType rust nmap <F7> :!cargo test -- --nocapture<CR>
